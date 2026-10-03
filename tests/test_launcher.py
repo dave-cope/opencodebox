@@ -52,6 +52,7 @@ def test_user_and_project_paths(launcher):
     assert has_seq(options, ["--ro-bind", f"{home}/.agents", f"{home}/.agents"])
     assert has_seq(options, ["--ro-bind", f"{home}/.cache/opencode", f"{home}/.cache/opencode"])
     assert has_seq(options, ["--bind", f"{home}/.local/share/opencode", f"{home}/.local/share/opencode"])
+    assert has_seq(options, ["--bind", f"{home}/.local/state/opencode", f"{home}/.local/state/opencode"])
     assert has_seq(options, ["--bind", str(launcher.project), str(launcher.project)])
     assert has_seq(options, ["--bind", str(launcher.bin), "/opt/opencode"])
     assert any(s[:1] == ["--file"] and s[-1] == "/etc/passwd" for s in seqs(options, 3))
