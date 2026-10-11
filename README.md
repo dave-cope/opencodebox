@@ -108,6 +108,7 @@ opencodebox --with /data --with-ro /config serve
 **Read-Write:**
 - Current project directory (`$PWD`)
 - `$HOME/.local/share/opencode` - OpenCode application data
+- `$HOME/.local/state/opencode` - OpenCode runtime state (locks, etc.)
 
 **Tmpfs (Private, writable per-session):**
 - `/tmp` - Temporary files

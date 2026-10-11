@@ -59,6 +59,19 @@ def test_user_and_project_paths(launcher):
     assert any(s[:1] == ["--file"] and s[-1] == "/etc/group" for s in seqs(options, 3))
 
 
+def test_missing_state_dir_created_before_bind(launcher):
+    # bwrap's plain --bind hard-fails if the source path is absent. Simulate an
+    # opencode-v1 host (application data present) that has not created the v2
+    # state dir yet, so ~/.local/state/opencode does not exist on the host.
+    state_dir = launcher.home / ".local/state/opencode"
+    (launcher.home / ".local/share/opencode").mkdir(parents=True)  # v1 data still present
+    assert not state_dir.exists()
+    options, _ = launcher.captured(launcher.run_launcher())
+    # The launcher must create the bind source before bwrap runs, and still bind it.
+    assert state_dir.is_dir(), "launcher must mkdir -p ~/.local/state/opencode before binding"
+    assert has_seq(options, ["--bind", str(state_dir), str(state_dir)])
+
+
 def test_with_overrides_tmpfs_last_wins(launcher):
     extra = launcher.root / "extra"
     extra.mkdir()

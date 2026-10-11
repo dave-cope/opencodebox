@@ -291,6 +291,10 @@ CACHE_DIR="$HOME/.cache/opencode"
 OPCODE_PATH=$(command -v opencode)
 OPCODE_DIR=$(dirname "$OPCODE_PATH")
 
+# bwrap --bind hard-fails if the source is missing; opencode v2 keeps state under
+# ~/.local/state/opencode, which v1 users and fresh hosts may not have created yet.
+mkdir -p "$HOME/.local/state/opencode"
+
 # Later bindings override earlier ones (--with binds come last = highest priority)
 declare -a BWRAP_ARGS=(
     # --- Isolation & Namespaces ---
@@ -339,7 +343,7 @@ declare -a BWRAP_ARGS=(
     # --- User Local Data ---
     --ro-bind "$HOME/.local" "$HOME/.local"
     --tmpfs "$HOME/.cache"                   # Writable cache (universal for uv, cargo, etc.)
-    --bind "$HOME/.local/state/opencode" "$HOME/.local/state/opencode"  # Writable state (locks, etc.)
+    --bind "$HOME/.local/state/opencode" "$HOME/.local/state/opencode" # Writable state (locks, etc.)
 
     # --- OpenCode Specific (read-only) ---
     --ro-bind "$CONFIG_DIR" "$CONFIG_DIR"
